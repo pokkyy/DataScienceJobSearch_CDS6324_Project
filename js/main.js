@@ -15,7 +15,13 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
     }).addTo(map);
 
     // Load GeoJSON data of world countries
+    // ("admin", "iso_a2", "geometry")
     d3.json("/data/custom.geo.json").then(function(geojson) {
+        // filter invalid
+        geojson.features = data.features.filter(function(feature) {
+            return feature.properties.name !== "Antarctica" && feature.geometry;
+        });
+    
         // Add GeoJSON layer to map
         L.geoJSON(geojson, {
             style: function(feature) {
@@ -30,7 +36,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
         }).addTo(map);
     });
 
-    // Define color scale for choropleth
+    // Define color scale for choropleth, ffix later
     function getColor(d) {
         return d > 250000 ? '#1A1F16' :
             d > 200000 ? '#AE3F20' :
