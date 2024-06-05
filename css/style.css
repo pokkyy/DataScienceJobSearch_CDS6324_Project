@@ -20,8 +20,9 @@ body {
     background-color: #7C9885;
 }
 
-#map {
-    flex: 2;
+#jobMap {
+    flex: 3;
+    height: 500px;
     border-width: 1px;
     background-color: #E8EDEA;
 }
