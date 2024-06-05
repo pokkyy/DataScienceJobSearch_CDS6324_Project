@@ -9,9 +9,22 @@ body {
 #userInput {
     line-height: 1.5;
     padding: 10px 10px 15px 10px;
-    background-color: #474350;
+    background-color: #7C9885;
 }
 
-#graphs a {
-    
+#map {
+    border-width: 1px;
+    margin: auto;
+    background-color: #E8EDEA;
+}
+
+.graphs {
+    margin: auto;
+    padding: 5px 5px 5px 5px;
+    background-color: #E8EDEA;
+    border-color: #474350;
+    border-width: 1px;
+}
+.graphs a:hover {
+    color: #FECDAA;
 }
