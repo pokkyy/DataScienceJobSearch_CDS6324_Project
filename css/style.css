@@ -1,7 +1,13 @@
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: Verdana, Arial, sans-serif;
     color: #090909;
     line-height: 1.15;
     margin: 25px 50px 25px 50px;
     background-color: #FBFBFF;
+}
+
+#userInput {
+    line-height: 1.5;
+    padding: 10px 10px 15px 10px;
+    background-color: #474350;
 }
