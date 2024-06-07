@@ -58,6 +58,11 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
                     color: 'white',
                     fillOpacity: 0.8
                 };
+            },
+            onEachFeature: function (feature, layer) {
+                var averageSalary = averageSalaryDict[feature.properties.iso_a2];
+                var salaryMessage = isNaN(averageSalary) ? 'Salary data not available' : 'Average Salary: $' + averageSalary.toFixed(2);
+                layer.bindTooltip('<b>' + feature.properties.name + '</b><br>' + salaryMessage, { direction: 'auto' });
             }
         }).addTo(map);
 
@@ -71,7 +76,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
                 from, to;
         
             // Add legend title
-            div.innerHTML += '<strong>Average Salary</strong><br>';
+            div.innerHTML += '<strong>Average Salary in USD</strong><br>';
         
             // Loop through the grades to generate labels with colored squares
             for (var i = 0; i < grades.length; i++) {
@@ -79,8 +84,8 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
                 to = grades[i + 1];
         
                 labels.push(
-                    '<i style="background:' + colorScale(from + 1) + '"></i> ' +
-                    from + (to ? '&ndash;' + to : '+'));
+                    '<i style="background:' + colorScale(from + 1) + '"></i> $' +
+                    from + (to ? '&ndash;$' + to : '+'));
             }
         
             div.innerHTML += labels.join('<br>');

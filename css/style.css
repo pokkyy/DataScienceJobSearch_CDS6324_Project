@@ -43,6 +43,14 @@ body {
     margin-right: 5px;
 }
 
+.leaflet-tooltip {
+    border: none; /* Remove the border */
+    background-color: transparent; /* Make the background transparent */
+    box-shadow: none; /* Remove any shadow */
+    font-size: 12px; /* Adjust font size if needed */
+}
+
+
 /* Bottom Container styling */  
 .graphs {
     display: flex;
