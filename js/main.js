@@ -30,7 +30,9 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
         // Calculate average salary for each location
         var averageSalaryDict = {};
         for (var location in salaryDict) {
-            averageSalaryDict[location] = salaryDict[location].total / salaryDict[location].count;
+            if (salaryDict[location].count > 0) { // Check if there is salary data for the location
+                averageSalaryDict[location] = salaryDict[location].total / salaryDict[location].count;
+            }
         }
         console.log(averageSalaryDict);
 
@@ -40,17 +42,17 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
         var colorScale = d3.scaleLinear()
             .domain([d3.min(Object.values(averageSalaryDict)),
                     d3.max(Object.values(averageSalaryDict))])
-            .range(['#B3CC8F', '#1A1F16']);   
-
+            .range(['#B3CC8F', '#1A1F16']);
+        
             // Filter out Antarctica
         var filteredGeojson = geojson.features.filter(function(feature) {
-            return feature.properties.name !== "Antarctica";
+            return feature.properties.name !== "Antarctica" && averageSalaryDict[feature.properties.iso_a2] !== undefined;
         });
 
         // Add GeoJSON layer to map
         L.geoJSON(filteredGeojson, {
             style: function(feature) {
-                var averageSalary = averageSalaryDict[feature.properties.iso_a2] || 0;
+            var averageSalary = averageSalaryDict[feature.properties.iso_a2] || 0;
                 return {
                     fillColor: colorScale(averageSalary),
                     weight: 1,
@@ -61,8 +63,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
             },
             onEachFeature: function (feature, layer) {
                 var averageSalary = averageSalaryDict[feature.properties.iso_a2];
-                var salaryMessage = isNaN(averageSalary) ? 'Salary data not available' : 'Average Salary: $' + averageSalary.toFixed(2);
-                layer.bindTooltip('<b>' + feature.properties.name + '</b><br>' + salaryMessage, { direction: 'auto' });
+                layer.bindTooltip('<b>' + feature.properties.name + '</b><br>Average Salary: $' + averageSalary.toFixed(2), { direction: 'auto' });
             }
         }).addTo(map);
 
