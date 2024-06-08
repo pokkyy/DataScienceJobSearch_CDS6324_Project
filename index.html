@@ -33,10 +33,44 @@
     
     <!-- User input -->
     <div class="topContainer">
-        <div id="userInput">User Input</div>
+
+        <div id="userInput"> <h4>User Input for:</h4> 
+
+            <form id="dataForm">
+                <label for="employmentType">Employment Type:</label>
+                <div id="employmentTypeContainer"></div>
+
+                <br><br>
+                <label for="experienceLevel">Experience Level:</label>
+                <div id="experienceLevelContainer"></div>
+
+                <br><br>
+                <label for="jobTitle">Job Title:</label>
+                <select id="jobTitle" name="jobTitle"></select>
+
+                <br><br>
+                <label for="remoteFactor">Remote Factor:</label>
+                <input type="range" id="remoteFactor" name="remoteFactor" min="0" max="100">
+
+                <br><br>
+                <label for="companySize">Company Size:</label>
+                <div id="companySizeContainer"></div>
+
+                <br><br>
+                <label for="salaryUserInput">Salary:</label>
+                <input type="range" id="salaryUserInput" name="salaryUserInput">
+
+                <br><br>
+                <button type="button" id="filterButton">Filter</button>
+                
+            </form>
+
+
+        </div>
 
         <!-- Map -->
         <div id="jobMap"></div>
+
     </div>
 
     <!-- Graphs -->

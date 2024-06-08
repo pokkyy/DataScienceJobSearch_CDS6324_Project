@@ -71,6 +71,130 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
     // company size
 
     // User input
+    
+
+    // User input will go first to affect map
+        // Salary use USD
+        // 
+        var currentCountry = null;
+        var salaryDict = {};
+
+        var employmentTypes = new Set();
+        var experienceLevels = new Set();
+        var jobTitles = new Set();
+        var companySizes = new Set();
+        var minSalary = Infinity;
+        var maxSalary = -Infinity;
+
+        data.forEach(function(d) {
+            if (!salaryDict[d.company_location]) {
+                salaryDict[d.company_location] = {total: 0, count: 0};
+            }
+            salaryDict[d.company_location].total += +d.salary_in_usd;
+            salaryDict[d.company_location].count += 1;
+
+            employmentTypes.add(d.employment_type);
+            experienceLevels.add(d.experience_level);
+            jobTitles.add(d.job_title);
+            companySizes.add(d.company_size);
+
+            if (d.salary_in_usd < minSalary) minSalary = d.salary_in_usd;
+            if (d.salary_in_usd > maxSalary) maxSalary = d.salary_in_usd;
+        });
+
+        // Populate employment types
+        employmentTypes.forEach(function(type) {
+            d3.select('#employmentTypeContainer')
+                .append('input')
+                .attr('type', 'checkbox')
+                .attr('name', 'employmentType')
+                .attr('value', type);
+            d3.select('#employmentTypeContainer')
+                .append('label')
+                .text(type);
+            d3.select('#employmentTypeContainer')
+                .append('br');
+        });
+
+        // Populate experience levels
+        experienceLevels.forEach(function(level) {
+            d3.select('#experienceLevelContainer')
+                .append('input')
+                .attr('type', 'checkbox')
+                .attr('name', 'experienceLevel')
+                .attr('value', level);
+            d3.select('#experienceLevelContainer')
+                .append('label')
+                .text(level);
+            d3.select('#experienceLevelContainer')
+                .append('br');
+        });
+
+        // Populate job titles
+        jobTitles.forEach(function(title) {
+            d3.select('#jobTitle')
+                .append('option')
+                .attr('value', title)
+                .text(title);
+        });
+
+        // Populate company sizes
+        companySizes.forEach(function(size) {
+            d3.select('#companySizeContainer')
+                .append('input')
+                .attr('type', 'checkbox')
+                .attr('name', 'companySize')
+                .attr('value', size);
+            d3.select('#companySizeContainer')
+                .append('label')
+                .text(size);
+            d3.select('#companySizeContainer')
+                .append('br');
+        });
+
+        // Set salary range
+        d3.select('#salaryUserInput')
+            .attr('min', minSalary)
+            .attr('max', maxSalary);
+
+        var averageSalaryDict = {};
+        for (var location in salaryDict) {
+            if (salaryDict[location].count > 0) {
+                averageSalaryDict[location] = salaryDict[location].total / salaryDict[location].count;
+            }
+        }
+
+        function makeGraphs(currentCountry, filters) {
+            makeTable(currentCountry, filters);
+        }
+
+        function makeTable(currentCountry, filters) {
+            d3.select('#jobTable').selectAll("table").remove();
+            var table = d3.select('#jobTable').append('table');
+            var countryData = data.filter(function(d) {
+                return d.company_location === currentCountry &&
+                    (!filters.jobTitle || d.job_title === filters.jobTitle) &&
+                    (!filters.employmentType || filters.employmentType.includes(d.employment_type)) &&
+                    (!filters.experienceLevel || filters.experienceLevel.includes(d.experience_level)) &&
+                    (!filters.companySize || filters.companySize.includes(d.company_size)) &&
+                    (!filters.salary || d.salary_in_usd <= filters.salary);
+            });
+
+            var header = table.append("tr");
+            header.append("th").text("Job Title");
+            header.append("th").text("Employment Type");
+            header.append("th").text("Experience Level");
+
+            var rows = table.selectAll("tr.data-row")
+                .data(countryData)
+                .enter()
+                .append("tr")
+                .classed("data-row", true);
+
+            rows.append("td").text(function(d) { return d.job_title; });
+            rows.append("td").text(function(d) { return d.employment_type; });
+            rows.append("td").text(function(d) { return d.experience_level; });
+        }
 
     // Map
     var map = L.map('jobMap').setView([0, 0], 2);
