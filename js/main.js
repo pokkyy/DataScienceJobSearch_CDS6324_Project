@@ -51,6 +51,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
         header.append("th").text("Job Title");
         header.append("th").text("Employment Type");
         header.append("th").text("Experience Level");
+        header.append("th").text("Salary in USD ($)");
 
         // Append rows with data for the selected country
         var rows = table.selectAll("tr.data-row")
@@ -62,6 +63,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function(data){
         rows.append("td").text(function(d) { return d.job_title; });
         rows.append("td").text(function(d) { return d.employment_type; });
         rows.append("td").text(function(d) { return d.experience_level; });
+        rows.append("td").text(function(d) {return + d.salary_in_usd.toFixed(2); });
     }
 
     // Job numbers
