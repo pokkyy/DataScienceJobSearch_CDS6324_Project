@@ -1,5 +1,7 @@
 # Money, Money, Money: What’s My Next Job Like? (Data Science edition)
-**Project Members**
+> CDS6324 Data Visualization Project || Year 3 Trimester 2
+
+# Project Members
 1. Anis Hazirah Binti Mohamad Sabry
 2. Nuha Awadah Binti Mohd Yusof
 
