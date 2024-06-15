@@ -11,7 +11,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
     var experienceLevels = new Set();
     var jobTitles = new Set();
     var companySizes = new Set();
-    var minSalary = Infinity;
+    var minSalary = Infinity; // damn javascript is weak with the data structures (i can force it to be whatever i want after initializing it)
     var maxSalary = -Infinity;
 
     // salary setup -------------------------------------------------------------------------------------------------------------------------------------
@@ -29,8 +29,8 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
         jobTitles.add(d.job_title);
         companySizes.add(d.company_size);
 
-        // if (d.salary_in_usd < minSalary) minSalary = d.salary_in_usd;
-        // if (d.salary_in_usd > maxSalary) maxSalary = d.salary_in_usd;
+        if (d.salary_in_usd < minSalary) minSalary = d.salary_in_usd;
+        if (d.salary_in_usd > maxSalary) maxSalary = d.salary_in_usd;
     });
 
     // Calculate average salary for each location
