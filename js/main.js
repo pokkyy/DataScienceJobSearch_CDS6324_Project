@@ -29,8 +29,8 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
         jobTitles.add(d.job_title);
         companySizes.add(d.company_size);
 
-        if (d.salary_in_usd < minSalary) minSalary = d.salary_in_usd;
-        if (d.salary_in_usd > maxSalary) maxSalary = d.salary_in_usd;
+        // if (d.salary_in_usd < minSalary) minSalary = d.salary_in_usd;
+        // if (d.salary_in_usd > maxSalary) maxSalary = d.salary_in_usd;
     });
 
     // Calculate average salary for each location
@@ -149,58 +149,6 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
         .attr( "type", "range")
         .attr("min", minSalary)
         .attr("max", maxSalary);
-
-    var averageSalaryDict = {};
-    for (var location in salaryDict) {
-        if (salaryDict[location].count > 0) {
-            averageSalaryDict[location] =
-                salaryDict[location].total / salaryDict[location].count;
-        }
-    }
-
-    function makeGraphs(currentCountry, filters) {
-        makeTable(currentCountry, filters);
-    }
-
-    function makeTable(currentCountry, filters) {
-        d3.select("#jobTable").selectAll("table").remove();
-        var table = d3.select("#jobTable").append("table");
-        var countryData = data.filter(function (d) {
-            return (
-                d.company_location === currentCountry &&
-                (!filters.jobTitle || d.job_title === filters.jobTitle) &&
-                (!filters.employmentType ||
-                    filters.employmentType.includes(d.employment_type)) &&
-                (!filters.experienceLevel ||
-                    filters.experienceLevel.includes(d.experience_level)) &&
-                (!filters.companySize ||
-                    filters.companySize.includes(d.company_size)) &&
-                (!filters.salary || d.salary_in_usd <= filters.salary)
-            );
-        });
-
-        var header = table.append("tr");
-        header.append("th").text("Job Title");
-        header.append("th").text("Employment Type");
-        header.append("th").text("Experience Level");
-
-        var rows = table
-            .selectAll("tr.data-row")
-            .data(countryData)
-            .enter()
-            .append("tr")
-            .classed("data-row", true);
-
-        rows.append("td").text(function (d) {
-            return d.job_title;
-        });
-        rows.append("td").text(function (d) {
-            return d.employment_type;
-        });
-        rows.append("td").text(function (d) {
-            return d.experience_level;
-        });
-    }
 
     // Map
     var map = L.map("jobMap").setView([0, 0], 2);
