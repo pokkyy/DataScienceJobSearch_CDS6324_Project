@@ -95,6 +95,9 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
 
     // Job numbers
     // Avg salary
+
+
+    
     // experience level
     // remote ratio
     // company size
