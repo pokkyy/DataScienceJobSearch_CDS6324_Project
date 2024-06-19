@@ -29,9 +29,12 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
         jobTitles.add(d.job_title);
         companySizes.add(d.company_size);
 
+
+        // checking for mim and max salary on console
         if (d.salary_in_usd < minSalary) minSalary = d.salary_in_usd;
         if (d.salary_in_usd > maxSalary) maxSalary = d.salary_in_usd;
     });
+
 
     // Calculate average salary for each location
     // need work  on this to account for diff job titles, etc for full customisastion
@@ -95,6 +98,10 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
 
     // Job numbers
     // Avg salary
+
+
+
+    
 
 
     
