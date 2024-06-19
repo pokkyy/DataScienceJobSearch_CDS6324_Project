@@ -94,7 +94,13 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
         rows.append("td").text(function (d) {
             return +d.salary_in_usd.toFixed(2);
         });
+
+
+
+        
     }
+
+    
 
     // Job numbers
     // Avg salary
@@ -124,7 +130,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
             .attr("name", "employmentType")
             .attr("value", type);
         d3.select("#employmentTypeContainer").append("label").text(type);
-        d3.select("#employmentTypeContainer").append("br");
+        // d3.select("#employmentTypeContainer").append("br");
     });
 
     // Populate experience levels
@@ -135,7 +141,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
             .attr("name", "experienceLevel")
             .attr("value", level);
         d3.select("#experienceLevelContainer").append("label").text(level);
-        d3.select("#experienceLevelContainer").append("br");
+        // d3.select("#experienceLevelContainer").append("br");
     });
 
     // Populate job titles
@@ -151,7 +157,7 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
             .attr("name", "companySize")
             .attr("value", size);
         d3.select("#companySizeContainer").append("label").text(size);
-        d3.select("#companySizeContainer").append("br");
+        // d3.select("#companySizeContainer").append("br");
     });
 
     // Set salary range
@@ -159,6 +165,9 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
         .attr( "type", "range")
         .attr("min", minSalary)
         .attr("max", maxSalary);
+
+
+    
 
     // Map
     var map = L.map("jobMap").setView([0, 0], 2);
