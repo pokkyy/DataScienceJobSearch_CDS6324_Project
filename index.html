@@ -18,15 +18,6 @@
 <!-- Using Glyphicons = https://getbootstrap.com/docs/3.3/components/#glyphicons-how-to-use -->
 
 <body>
-    <!-- Load JS -->
-	<script src="js/jquery.min.js"></script>
-	<script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Load Lab 12 by using main2.js -->
-	<script src="js/main.js"></script>  
-    
-
     <h1><u>Money Money Money: 
         <i>My Next Job Like? (Data Science edition)</i></u></h1>
 
@@ -50,9 +41,9 @@
                 <label for="jobTitle">Job Title:</label>
                 <select id="jobTitle" name="jobTitle"></select>
 
-                <br><br>
+                <!-- <br><br>
                 <label for="remoteFactor">Remote Factor:</label>
-                <input type="range" id="remoteFactor" name="remoteFactor" min="0" max="100">
+                <input type="range" id="remoteFactor" name="remoteFactor" min="0" max="100"> -->
 
                 <br><br>
                 <label for="companySize">Company Size:</label>
@@ -64,6 +55,7 @@
 
                 <br><br>
                 <button type="button" id="filterButton">Filter</button>
+                <button id="clearSelectionButton">Clear Selection</button>
 
             </form>
 
@@ -93,6 +85,14 @@
             <div id="compSize">Company Size</div>
         </div>
     </div>
+
+    <!-- Load JS -->
+	<script src="js/jquery.min.js"></script>
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+	<script src="js/main.js"></script>  
+
 </body>
 
 </html>

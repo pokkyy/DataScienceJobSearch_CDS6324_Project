@@ -10,41 +10,20 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
     // Event listener for Filter button
     document.getElementById('filterButton').addEventListener('click', function() {
         // Gather user input values
-        const selectedEmploymentType = d3.select('input[name="employmentType"]:checked').node()?.value || null;
-        const selectedExperienceLevel = d3.select('input[name="experienceLevel"]:checked').node()?.value || null;
-        const selectedJobTitle = d3.select('#jobTitle').node()?.value || null;
-        const selectedCompanySize = d3.select('input[name="companySize"]:checked').node()?.value || null;
-        const selectedSalary = +document.getElementById('salaryUserInput').value || 0;
-
-        // Log the user inputs
-        console.log("Selected Employment Type:", selectedEmploymentType);
-        console.log("Selected Experience Level:", selectedExperienceLevel);
-        console.log("Selected Job Title:", selectedJobTitle);
-        console.log("Selected Company Size:", selectedCompanySize);
-        console.log("Selected Salary:", selectedSalary);
-
-        // Log the first few rows of data to inspect its structure
-        console.log("Sample of Data:", dataWrangled.data.slice(0, 5));
+        const selectedEmploymentType = d3.select('input[name="employmentType"]:checked').node().value;
+        const selectedExperienceLevel = d3.select('input[name="experienceLevel"]:checked').node().value;
+        const selectedJobTitle = d3.select('#jobTitle').node().value;
+        const selectedCompanySize = d3.select('input[name="companySize"]:checked').node().value;
+        const selectedSalary = +document.getElementById('salaryUserInput').value;
 
         // Filter data based on user selections
         let filteredData = dataWrangled.data.filter(function(d) {
-            // Print each condition to verify filtering logic
-            // console.log(
-            //     (!selectedEmploymentType || d.employment_type === selectedEmploymentType),
-            //     (!selectedExperienceLevel || d.experience_level === selectedExperienceLevel),
-            //     (!selectedJobTitle || d.job_title === selectedJobTitle),
-            //     (!selectedCompanySize || d.company_size === selectedCompanySize),
-            //     (!selectedSalary || +d.salary_in_usd >= selectedSalary)
-            // );
             return (!selectedEmploymentType || d.employment_type === selectedEmploymentType) &&
                    (!selectedExperienceLevel || d.experience_level === selectedExperienceLevel) &&
                    (!selectedJobTitle || d.job_title === selectedJobTitle) &&
                    (!selectedCompanySize || d.company_size === selectedCompanySize) &&
                    (!selectedSalary || +d.salary_in_usd >= selectedSalary);
         });
-
-        // Log the filtered data
-        console.log("Filtered Data:", filteredData);
 
         // Update the map and table with filtered data
         const filteredWrangledData = wrangleData(filteredData); // Wrangle filtered data again if needed
@@ -98,8 +77,6 @@ function wrangleData(data) {
     };
 }
 
-let map; // Global variable for the map
-
 function setupInteractivity(dataWrangled) {
     const { employmentTypes, experienceLevels, jobTitles, companySizes, minSalary, maxSalary } = dataWrangled;
 
@@ -143,12 +120,7 @@ function setupInteractivity(dataWrangled) {
 function createMap(dataWrangled) {
     const { averageSalaryDict } = dataWrangled;
 
-    // Check if map is already initialized
-    if (map) {
-        map.remove();
-    }
-
-    map = L.map("jobMap").setView([0, 0], 2);
+    var map = L.map("jobMap").setView([0, 0], 2);
     var previousCountry = null;
     var currentCountry = null;
 
@@ -228,8 +200,6 @@ function createMap(dataWrangled) {
         legend.addTo(map);
     });
 }
-
-
 
 function makeGraphs(currentCountry, dataWrangled) {
     makeTable(currentCountry, dataWrangled.data);
