@@ -214,48 +214,57 @@ function makeBarplot(svgSelector) {
             .nice()
             .range([height, 0]);
 
-        svg.append("g")
-            .selectAll(".bar")
+        // Add bars with transition
+        svg.selectAll(".bar")
             .data(newData)
             .enter()
             .append("rect")
             .attr("class", "bar")
             .attr("x", d => x(d[selectKey]))
-            .attr("y", d => y(d.count))
+            .attr("y", height)
             .attr("width", x.bandwidth())
+            .attr("height", 0)
+            .attr("fill", "#60AB9A")
+            .transition()
+            .duration(800)
+            .attr("y", d => y(d.count))
             .attr("height", d => height - y(d.count))
-            .attr("fill", "#60AB9A");
+            .delay((d, i) => i * 100); // Add delay to each bar
 
-            svg.append("g")
+        // Add x-axis
+        svg.append("g")
             .attr("class", "x-axis")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x))
             .selectAll("text")
-            .attr("transform", "rotate(-45)") // Rotate labels by -45 degrees
+            .attr("transform", "rotate(-45)")
             .attr("y", 10)
             .attr("dy", "0.35em") // Adjust vertical alignment
             .style("text-anchor", "end") // Adjust text anchor based on rotation
             .style("font-size", "8px"); // Adjust font size here
 
+        // Add y-axis
         svg.append("g")
             .attr("class", "y-axis")
             .call(d3.axisLeft(y));
 
+        // Add x-axis label
         svg.append("text")
             .attr("class", "x-axis-label")
             .attr("text-anchor", "middle")
             .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10)
+            .text(selectKey);
 
+        // Add y-axis label
         svg.append("text")
             .attr("class", "y-axis-label")
-            .attr("text-anchor", "top")
-            .attr("transform", "rotate(0)")
-            .attr("x", -margin.left / 2)
-            .attr("y", -margin.top / 2)
+            .attr("text-anchor", "middle")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -margin.left / 2)
             .text("Count")
             .style("font-size", "8px"); // Adjust font size here
-        
     }
     return update;
 }
