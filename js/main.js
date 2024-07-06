@@ -115,11 +115,15 @@ function makeTable() {
     var table = d3.select("#jobTable").append("table");
 
     function update(newData) {
-        console.log("New Data:", newData); // Log newData to check its type
+        console.log("Table data:", newData); // Log newData to check its type
 
-        var countryData = newData.filter(function (d) {
-            return d.companyLocations === state.currentCountry;
-        });
+        // should be filtetred beforehand so no need
+        // var countryData = newData.filter(function (d) {
+        //     if (state.currentCountry != "") {
+        //         return d.company_location === state.currentCountry;
+        //     }
+        // });
+        // console.log("Table COUNTRY data:", countryData);
 
         table.selectAll("tr").remove();
 
@@ -130,7 +134,7 @@ function makeTable() {
         header.append("th").text("Salary in USD ($)");
 
         var rows = table.selectAll("tr.data-row")
-            .data(countryData)
+            .data(newData)
             .enter()
             .append("tr")
             .classed("data-row", true);
@@ -284,6 +288,7 @@ function wrangleData(data) {
         experienceLevels,
         jobTitles,
         companySizes,
+        companyLocations,
         minSalary,
         maxSalary
     };
@@ -298,7 +303,7 @@ function updateApp() {
     console.log('DataToUse: ', dataToUse);
 
     jobTable(dataToUse.data);
-    jobMap(dataToUse);
+    //jobMap(dataToUse);
 }
 
 d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
