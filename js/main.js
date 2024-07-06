@@ -193,17 +193,36 @@ function setupInteractivity(data) {
 }
 
 function filterData() {
-    return state.data.filter(function(d) {
+    let filteredData = state.data.filter(function(d) {
         return (!state.selectedEmploymentType || d.employment_type === state.selectedEmploymentType) &&
                 (!state.selectedExperienceLevel || d.experience_level === state.selectedExperienceLevel) &&
                 (!state.selectedJobTitle || d.job_title === state.selectedJobTitle) &&
                 (!state.selectedCompanySize || d.company_size === state.selectedCompanySize) &&
                 (!state.selectedSalary || +d.salary_in_usd >= state.selectedSalary)  &&
-                (!state.currentCountry || d.company_location === state.selectedCountry);
+                (!state.currentCountry || d.company_location === state.currentCountry);
     });
+    return filteredData;
+
+    // return state.data.filter(d => {
+    //     if (state.selectedEmploymentType && d.employment_type !== state.selectedEmploymentType) { return false; }
+    //     if (state.selectedExperienceLevel && d.experience_level !== state.selectedExperienceLevel) { return false; }
+    //     if (state.selectedJobTitle && d.job_title !== state.selectedJobTitle) { return false; }
+    //     if (state.selectedCompanySize && d.company_size !== state.selectedCompanySize) { return false; }
+    //     if (state.selectedSalary && d.salary_in_usd !== state.selectedSalary) { return false; }
+    //     if (state.currentCountry && d.company_location !== state.currentCountry) { return false; }
+    //     return true;
+    // });
+    // return state.data.filter(function(d) {
+    //     return (!state.selectedEmploymentType || d.employment_type === state.selectedEmploymentType) &&
+    //             (!state.selectedExperienceLevel || d.experience_level === state.selectedExperienceLevel) &&
+    //             (!state.selectedJobTitle || d.job_title === state.selectedJobTitle) &&
+    //             (!state.selectedCompanySize || d.company_size === state.selectedCompanySize) &&
+    //             (!state.selectedSalary || +d.salary_in_usd >= state.selectedSalary)  &&
+    //             (!state.currentCountry || d.company_location === state.selectedCountry);
+    // });
 }
 
-function wrangleData(filtered) {
+function wrangleData(data) {
     const employmentTypes = new Set();
     const experienceLevels = new Set();
     const jobTitles = new Set();
@@ -211,8 +230,7 @@ function wrangleData(filtered) {
     const companyLocations = new Set();
     let minSalary = Infinity;
     let maxSalary = -Infinity;
-
-    const salaryDict = {}; // Initialize salaryDict here
+    const salaryDict = {};
 
     // Mapping dictionaries for employment types and experience levels
     const employmentTypeMap = {
@@ -230,7 +248,7 @@ function wrangleData(filtered) {
     };
 
     // Process each data entry
-    filtered.forEach(function (d) {
+    data.forEach(function (d) {
         // Update salary statistics for each company location
         if (!salaryDict[d.company_location]) {
             salaryDict[d.company_location] = { total: 0, count: 0 };
@@ -259,6 +277,7 @@ function wrangleData(filtered) {
     }
 
     return {
+        data,
         salaryDict,
         averageSalaryDict,
         employmentTypes,
@@ -275,13 +294,18 @@ function updateApp() {
     const filtered = filterData();
     const dataToUse = wrangleData(filtered);
 
-    jobTable(filtered);
+    console.log('Filtered: ', filtered);
+    console.log('DataToUse: ', dataToUse);
+
+    jobTable(dataToUse.data);
+    jobMap(dataToUse);
 }
 
 d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
     state.data = data;
     const filtered = filterData();
     const dataToUse = wrangleData(filtered);
+    
     setupInteractivity(dataToUse);
     jobMap(dataToUse);
 
