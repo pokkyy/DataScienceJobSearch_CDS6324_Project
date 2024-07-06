@@ -180,7 +180,7 @@ function makeTable() {
     return update;
 }
 
-// ------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
 function setupInteractivity(data) {
     const { employmentTypes, experienceLevels, jobTitles, companySizes, minSalary, maxSalary } = data;
 
