@@ -254,15 +254,13 @@ function makeBarplot(svgSelector) {
             .attr("text-anchor", "middle")
             .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10)
-            .text(selectKey);
 
         // Add y-axis label
         svg.append("text")
             .attr("class", "y-axis-label")
-            .attr("text-anchor", "middle")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -height / 2)
-            .attr("y", -margin.left / 2)
+            .attr("text-anchor", "top")
+            .attr("x", -margin.left / 2)
+            .attr("y", -margin.top / 2)
             .text("Count")
             .style("font-size", "8px"); // Adjust font size here
     }
@@ -526,10 +524,10 @@ d3.select('#clearSelectionButton').on('click', function() {
     state.selectedMaxSalary = Infinity;
     state.currentCountry = "";
 
-    d3.select('input[name="employmentType"]:checked').property("checked", false);
-    d3.select('input[name="experienceLevel"]:checked').property("checked", false);
+    d3.selectAll('.employment-type-checkbox').property("checked", false);
+    d3.selectAll('.experience-level-checkbox').property("checked", false);
     d3.select('#jobTitle').property("value", "");
-    d3.select('input[name="companySize"]:checked').property("checked", false);
+    d3.selectAll('.company-size-checkbox').property("checked", false);
     document.getElementById('minSalaryInput').value = 0;
     document.getElementById('maxSalaryInput').value = 0;
 

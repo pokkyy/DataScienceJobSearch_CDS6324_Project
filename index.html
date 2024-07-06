@@ -27,49 +27,47 @@
     <!-- User input -->
     <div class="topContainer">
 
-        <div id="userInput"> <h4>User Input for:</h4> 
+        <div id="userInput"><h2>User input for:</h2> 
 
             <form id="dataForm">
-                <label for="employmentType">Employment Type:</label>
+                <label for="employmentType"><h3>Employment Type:</h3></label>
                 <div id="employmentTypeContainer"></div>
                 <br>
 
                 <!-- <br><br> -->
-                <label for="experienceLevel">Experience Level:</label>
+                <label for="experienceLevel"><h3>Experience Level:</h3></label>
                 <div id="experienceLevelContainer"></div>
                 <br>
 
                 <!-- <br><br> -->
-                <label for="jobTitle">Job Title:</label>
+                <label for="jobTitle"><h3>Job Title:</h3></label>
                 <select id="jobTitle" name="jobTitle"></select>
-                <br>
+                <br><br>
 
                 <!-- <br><br>
                 <label for="remoteFactor">Remote Factor:</label>
                 <input type="range" id="remoteFactor" name="remoteFactor" min="0" max="100"> -->
 
-                <label for="companySize">Company Size:</label>
+                <label for="companySize"><h3>Company Size:</h3></label>
                 <div id="companySizeContainer"></div>
                 <br>
 
                 <!-- <label for="salaryUserInput">Salary:</label>
                 <input id="salaryUserInput" name="salaryUserInput"> -->
                 <div id="salaryRangeContainer">
-                    <label for="minSalaryInput">Minimum Salary:</label>
+                    <label for="minSalaryInput"><h3>Minimum Salary:</h3></label>
                     <br>
                     <input type="number" id="minSalaryInput" min="0" step="1000">
-                
-                    <label for="maxSalaryInput">Maximum Salary:</label>
+                    <br><br>
+                    <label for="maxSalaryInput"><h3>Maximum Salary:</h3></label>
                     <br>
                     <input type="number" id="maxSalaryInput" min="0" step="1000">
                 </div>
                 
-                <br><br>
-                <button type="button" id="filterButton">Filter</button>
-                <button id="clearSelectionButton">Clear Selection</button>
-
+                <br>
+                <button type="button" id="filterButton" class="button">Filter</button>
+                <button type="button" id="clearSelectionButton" class="button">Clear Selection</button>                
             </form>
-
 
         </div>
 
@@ -98,7 +96,7 @@
              <div id="compSizeContainer">Company Size
                 <div id="compSize"></div>
             </div>
-            
+
         </div>
     </div>
 

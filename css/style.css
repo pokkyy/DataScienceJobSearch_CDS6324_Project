@@ -1,9 +1,36 @@
 body {
     font-family: 'Roboto', Arial, sans-serif;
     color: #090909;
-    line-height: 1.15;
-    margin: 25px 50px 25px 50px;
+    line-height: 1.5;
+    margin: 25px 50px;
     background-color: #FBFBFF;
+}
+
+/* Heading Styling */
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 15px;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-decoration: underline;
+}
+
+h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 12px;
+    margin-bottom: 3px;
+    text-decoration: underline;
 }
 
 /* Top Container Styling */
@@ -13,27 +40,179 @@ body {
     padding: 10px;
 }
 
+.button {
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 20px; /* Padding inside the button */
+    display: inline-block; /* Make it inline block for proper alignment */
+    margin-right: 10px; /* Add some space between buttons */
+}
+
+.button:hover {
+    background-color: #DEDEE0; /* Darken background color on hover */
+}
+
+input[type="number"] {
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px; /* Padding inside the input */
+    border: 1px solid #ccc; /* Border style */
+    font-size: 14px; /* Font size */
+    width: 100%; /* Full width */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+input[type="number"]:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: #1A1F16; /* Change border color on focus */
+}
+
+/* Styling for the select box */
+#jobTitle {
+    width: 100%; /* Full width */
+    padding: 8px; /* Padding inside the select box */
+    border: 1px solid #ccc; /* Border style */
+    border-radius: 8px; /* Rounded corners */
+    background-color: #fff; /* Background color */
+    font-size: 14px; /* Font size */
+    color: #333; /* Text color */
+}
+
+/* Styling for the options inside the select box */
+#jobTitle option {
+    font-size: 14px; /* Font size */
+    color: #333; /* Text color */
+}
+
+/* Styling for the selected option */
+#jobTitle option:checked {
+    background-color: #f2f2f2; /* Background color when option is selected */
+}
+
+/* Styling for checkboxes */
+input[type="checkbox"].employment-type-checkbox,
+input[type="checkbox"].experience-level-checkbox,
+input[type="checkbox"].company-size-checkbox {
+    /* Hide the default checkbox */
+    display: none;
+}
+
+/* Custom checkbox style */
+input[type="checkbox"].employment-type-checkbox + span,
+input[type="checkbox"].experience-level-checkbox + span,
+input[type="checkbox"].company-size-checkbox + span {
+    position: relative;
+    display: inline-block;
+    padding-left: 25px; /* Space for custom checkbox */
+    padding-right: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Custom checkbox design */
+input[type="checkbox"].employment-type-checkbox + span::before,
+input[type="checkbox"].experience-level-checkbox + span::before,
+input[type="checkbox"].company-size-checkbox + span::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ccc; /* Border color */
+    background-color: #fff; /* Background color */
+    border-radius: 3px; /* Rounded corners */
+}
+
+/* Custom checkbox checked state */
+input[type="checkbox"].employment-type-checkbox:checked + span::before,
+input[type="checkbox"].experience-level-checkbox:checked + span::before,
+input[type="checkbox"].company-size-checkbox:checked + span::before {
+    background-color: #60AB9A; /* Background color when checked */
+}
+
+/* Custom checkbox indicator */
+input[type="checkbox"].employment-type-checkbox + span::after,
+input[type="checkbox"].experience-level-checkbox + span::after,
+input[type="checkbox"].company-size-checkbox + span::after {
+    content: "\2713"; /* Checkmark symbol */
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    font-size: 14px;
+    color: #fff; /* Color of the checkmark */
+    visibility: hidden;
+}
+
+/* Show checkmark when checkbox is checked */
+input[type="checkbox"].employment-type-checkbox:checked + span::after,
+input[type="checkbox"].experience-level-checkbox:checked + span::after,
+input[type="checkbox"].company-size-checkbox:checked + span::after {
+    visibility: visible;
+}
+
+/* Hover effect */
+input[type="checkbox"].employment-type-checkbox + span:hover::before,
+input[type="checkbox"].experience-level-checkbox + span:hover::before,
+input[type="checkbox"].company-size-checkbox + span:hover::before {
+    border-color: #999; /* Darker border on hover */
+}
+
+/* Active (clicked) state */
+input[type="checkbox"].employment-type-checkbox:checked + span::before,
+input[type="checkbox"].experience-level-checkbox:checked + span::before,
+input[type="checkbox"].company-size-checkbox:checked + span::before {
+    background-color: #294B29 ; /* Darker background when clicked */
+    border-color: #60AB9A; /* Darker border when clicked */
+}
+
 #userInput {
     flex: 1;
     line-height: 1.5;
-    padding: 10px 10px 15px 10px;
+    padding: 15px;
     background-color: #7C9885;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add box shadow for depth */
 }
 
 #jobMap {
     flex: 3;
     height: 500px;
-    border-width: 1px;
     background-color: #E8EDEA;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* Rounded corners */
+    margin-left: 15px; /* Add some space between map and user input */
 }
 
-/* map legend */
+#jobTable {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 15px; /* Adjust spacing */
+}
+
+#jobTable th, #jobTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#jobTable th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+#jobTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Map Legend */
 .info.legend {
     background-color: rgba(255, 255, 255, 0.6);
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 12px;
+    margin-top: 10px; /* Adjust spacing */
 }
 
 .info.legend i {
@@ -43,7 +222,7 @@ body {
     margin-right: 5px;
 }
 
-/* Bottom Container styling */  
+/* Bottom Container styling */
 .graphs {
     display: flex;
     gap: 15px;
@@ -54,8 +233,9 @@ body {
 .graphs > div {
     flex: 1 1 calc(25% - 15px); /* Take up 1/4 of the container width, accounting for gap */
     background-color: #E8EDEA;
-    border-color: #474350;
-    border-width: 2px;
+    border: 2px solid #474350;
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px;
 }
 
 .graphs a:hover {
@@ -64,17 +244,20 @@ body {
 
 #jobTable {
     flex: 2 1 calc(50% - 10px); /* Take up 50% of the container width */
+    background-color: #E8EDEA;
+    border: 2px solid #474350;
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px;
 }
 
 .stack {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
+    flex-direction: column;
     gap: 10px;
 }
 
 .stack > div {
     background-color: #E8EDEA;
-    border-color: #474350;
-    border-width: 2px;
-    flex: 1 ;
+    border-radius: 8px; /* Rounded corners */
+    flex: 1;
 }
