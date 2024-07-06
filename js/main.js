@@ -28,7 +28,7 @@ function createMap() {
     }).addTo(map);
 
     function update(newData) {
-        const { averageSalaryDict } = newData;
+        const { averageSalaryDict, companyLocations } = newData;
 
         d3.json("/data/custom.geo.json").then(function (geojson) {
             var colorScale = d3.scaleLinear()
@@ -37,7 +37,15 @@ function createMap() {
 
             var filteredGeojson = geojson.features.filter(function (feature) {
                 return feature.properties.name !== "Antarctica" &&
-                    averageSalaryDict[feature.properties.iso_a2] !== undefined;
+                    averageSalaryDict[feature.properties.iso_a2] !== undefined &&
+                    companyLocations.has(feature.properties.iso_a2); // Filter based on company locations in filtered data
+            });
+
+            // Remove previous layers before adding new ones
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.GeoJSON) {
+                    map.removeLayer(layer);
+                }
             });
 
             L.geoJSON(filteredGeojson, {
@@ -54,7 +62,7 @@ function createMap() {
                 onEachFeature: function (feature, layer) {
                     var averageSalary = averageSalaryDict[feature.properties.iso_a2];
                     layer.bindTooltip(
-                        "<b>" + feature.properties.name + "</b><br>Average Salary: $" + averageSalary.toFixed(2),
+                        "<b>" + feature.properties.name + "</b><br>Average Salary: $" + (averageSalary ? averageSalary.toFixed(2) : "N/A"),
                         { direction: "auto" }
                     );
 
@@ -85,8 +93,8 @@ function createMap() {
                 const div = L.DomUtil.create("div", "info legend"),
                     grades = [0, 50000, 100000, 150000, 200000, 250000],
                     labels = [];
-                    let from = null;
-                    let to = null;
+                let from = null;
+                let to = null;
 
                 div.innerHTML += "<strong>Average Salary in USD</strong><br>";
 
@@ -116,14 +124,8 @@ function makeTable() {
 
     function update(newData) {
         console.log("Table data:", newData); // Log newData to check its type
-
-        // should be filtetred beforehand so no need
-        // var countryData = newData.filter(function (d) {
-        //     if (state.currentCountry != "") {
-        //         return d.company_location === state.currentCountry;
-        //     }
-        // });
-        // console.log("Table COUNTRY data:", countryData);
+        
+        newData.sort((a, b) => a.job_title.localeCompare(b.job_title));
 
         table.selectAll("tr").remove();
 
@@ -206,24 +208,6 @@ function filterData() {
                 (!state.currentCountry || d.company_location === state.currentCountry);
     });
     return filteredData;
-
-    // return state.data.filter(d => {
-    //     if (state.selectedEmploymentType && d.employment_type !== state.selectedEmploymentType) { return false; }
-    //     if (state.selectedExperienceLevel && d.experience_level !== state.selectedExperienceLevel) { return false; }
-    //     if (state.selectedJobTitle && d.job_title !== state.selectedJobTitle) { return false; }
-    //     if (state.selectedCompanySize && d.company_size !== state.selectedCompanySize) { return false; }
-    //     if (state.selectedSalary && d.salary_in_usd !== state.selectedSalary) { return false; }
-    //     if (state.currentCountry && d.company_location !== state.currentCountry) { return false; }
-    //     return true;
-    // });
-    // return state.data.filter(function(d) {
-    //     return (!state.selectedEmploymentType || d.employment_type === state.selectedEmploymentType) &&
-    //             (!state.selectedExperienceLevel || d.experience_level === state.selectedExperienceLevel) &&
-    //             (!state.selectedJobTitle || d.job_title === state.selectedJobTitle) &&
-    //             (!state.selectedCompanySize || d.company_size === state.selectedCompanySize) &&
-    //             (!state.selectedSalary || +d.salary_in_usd >= state.selectedSalary)  &&
-    //             (!state.currentCountry || d.company_location === state.selectedCountry);
-    // });
 }
 
 function wrangleData(data) {
@@ -280,13 +264,16 @@ function wrangleData(data) {
         }
     }
 
+    // Convert jobTitles set to an array and sort it alphabetically
+    const sortedJobTitles = Array.from(jobTitles).sort();
+
     return {
         data,
         salaryDict,
         averageSalaryDict,
         employmentTypes,
         experienceLevels,
-        jobTitles,
+        jobTitles: sortedJobTitles, // Return the sorted job titles array
         companySizes,
         companyLocations,
         minSalary,
@@ -299,11 +286,11 @@ function updateApp() {
     const filtered = filterData();
     const dataToUse = wrangleData(filtered);
 
-    console.log('Filtered: ', filtered);
-    console.log('DataToUse: ', dataToUse);
+    // console.log('Filtered: ', filtered);
+    // console.log('DataToUse: ', dataToUse);
 
     jobTable(dataToUse.data);
-    //jobMap(dataToUse);
+    jobMap(dataToUse)
 }
 
 d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
