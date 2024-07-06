@@ -208,9 +208,11 @@ function wrangleData(filtered) {
     const experienceLevels = new Set();
     const jobTitles = new Set();
     const companySizes = new Set();
-    const companyLocations = new Set(); // Include set for company locations
+    const companyLocations = new Set();
     let minSalary = Infinity;
     let maxSalary = -Infinity;
+
+    const salaryDict = {}; // Initialize salaryDict here
 
     // Mapping dictionaries for employment types and experience levels
     const employmentTypeMap = {
@@ -257,7 +259,6 @@ function wrangleData(filtered) {
     }
 
     return {
-        filtered,
         salaryDict,
         averageSalaryDict,
         employmentTypes,
@@ -269,11 +270,12 @@ function wrangleData(filtered) {
     };
 }
 
+
 function updateApp() {
     const filtered = filterData();
     const dataToUse = wrangleData(filtered);
 
-    jobTable(dataToUse);
+    jobTable(filtered);
 }
 
 d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
