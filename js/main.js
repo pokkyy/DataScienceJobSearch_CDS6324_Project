@@ -3,8 +3,8 @@ const state = {
     avgSalary: {},
     previousCountry: null,
     currentCountry: "",
-    selectedEmploymentType: "",
-    selectedExperienceLevel: "",
+    selectedEmploymentType: [],
+    selectedExperienceLevels: [],
     selectedJobTitle: "",
     selectedCompanySize: "",
     selectedMinSalary: 0,
@@ -19,6 +19,22 @@ let employeeResidenceLayer;
 // visuals
 const jobTable = makeTable();
 const jobMap = createMap();
+
+
+// Mapping dictionaries for employment types and experience levels
+const employmentTypeMap = {
+    "PT": "Part-time",
+    "FT": "Full-time",
+    "CT": "Contract",
+    "FL": "Freelance"
+};
+
+const experienceLevelMap = {
+    "EN": "Entry-level / Junior",
+    "MI": "Mid-level / Intermediate",
+    "SE": "Senior-level / Expert",
+    "EX": "Executive-level / Director"
+};
 
 //------------------------------------------------------------------------------------------------  GRAPHS
 function createMap() {
@@ -168,23 +184,52 @@ function makeTable() {
 function setupInteractivity(data) {
     const { employmentTypes, experienceLevels, jobTitles, companySizes, minSalary, maxSalary } = data;
 
-    employmentTypes.forEach(type => {
-        d3.select("#employmentTypeContainer")
-            .append("input")
-            .attr("type", "radio")
-            .attr("name", "employmentType")
-            .attr("value", type);
-        d3.select("#employmentTypeContainer").append("label").text(type);
+    // employmentTypes.forEach(type => {
+    //     d3.select("#employmentTypeContainer")
+    //         .append("input")
+    //         .attr("type", "radio")
+    //         .attr("name", "employmentType")
+    //         .attr("value", type);
+    //     d3.select("#employmentTypeContainer").append("label").text(type);
+    // });
+
+    // experienceLevels.forEach(level => {
+    //     d3.select("#experienceLevelContainer")
+    //         .append("input")
+    //         .attr("type", "radio")
+    //         .attr("name", "experienceLevel")
+    //         .attr("value", level);
+    //     d3.select("#experienceLevelContainer").append("label").text(level);
+    // });
+
+    employmentTypes.forEach(level => {
+        const checkboxLabel = d3.select("#employmentTypeContainer")
+            .append("label");
+
+        checkboxLabel.append("input")
+            .attr("type", "checkbox")
+            .attr("class", "employment-type-checkbox")
+            .attr("value", level);
+
+        checkboxLabel.append("span")
+            .text(level);
     });
 
+    // Create checkboxes for experience levels
     experienceLevels.forEach(level => {
-        d3.select("#experienceLevelContainer")
-            .append("input")
-            .attr("type", "radio")
-            .attr("name", "experienceLevel")
+        const checkboxLabel = d3.select("#experienceLevelContainer")
+            .append("label");
+
+        checkboxLabel.append("input")
+            .attr("type", "checkbox")
+            .attr("class", "experience-level-checkbox")
             .attr("value", level);
-        d3.select("#experienceLevelContainer").append("label").text(level);
+
+        checkboxLabel.append("span")
+            .text(level);
     });
+
+    d3.select("#jobTitle").append("option").attr("value", "").text("Select job title");
 
     jobTitles.forEach(title => {
         d3.select("#jobTitle").append("option").attr("value", title).text(title);
@@ -205,31 +250,63 @@ function setupInteractivity(data) {
     //     .attr("max", maxSalary);
 }
 
+function getSelectedExperienceLevels() {
+    const selectedLevels = [];
+    d3.selectAll(".experience-level-checkbox:checked").each(function () {
+        const value = d3.select(this).attr("value");
+        const key = getKeyByValue(experienceLevelMap, value);
+        if (key) {
+            selectedLevels.push(key);
+        }
+    });
+    return selectedLevels;
+}
+
+function getSelectedEmploymentType() {
+    const selectedLevels = [];
+    d3.selectAll(".employment-type-checkbox:checked").each(function () {
+        const value = d3.select(this).attr("value");
+        const key = getKeyByValue(employmentTypeMap, value);
+        if (key) {
+            selectedLevels.push(key);
+        }
+    });
+    return selectedLevels;
+}
+
+// Helper function to get key from value in experienceLevelMap
+function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+}
+
 function filterData() {
     let filteredData = state.data.filter(function(d) {
-        return (!state.selectedEmploymentType || d.employment_type === state.selectedEmploymentType) &&
-                (!state.selectedExperienceLevel || d.experience_level === state.selectedExperienceLevel) &&
-                (!state.selectedJobTitle || d.job_title === state.selectedJobTitle) &&
-                (!state.selectedCompanySize || d.company_size === state.selectedCompanySize) &&
-                (!state.currentCountry || d.company_location === state.currentCountry) &&
-                (d.salary_in_usd >= state.selectedMinSalary && d.salary_in_usd <= state.selectedMaxSalary);
+        return (!state.selectedJobTitle || d.job_title === state.selectedJobTitle) &&
+               (!state.selectedCompanySize || d.company_size === state.selectedCompanySize) &&
+               (!state.currentCountry || d.company_location === state.currentCountry) &&
+               (d.salary_in_usd >= state.selectedMinSalary && d.salary_in_usd <= state.selectedMaxSalary) &&
+               (state.selectedExperienceLevels.length === 0 || state.selectedExperienceLevels.includes(d.experience_level)) &&
+               (state.selectedEmploymentType.length === 0 || state.selectedEmploymentType.includes(d.employment_type));
     });
 
-    // If no filters are selected, return all data
+    // If no filters are selected (or all filters are null, undefined, or default),
+    // return all data
     if (
-        !state.selectedEmploymentType &&
-        !state.selectedExperienceLevel &&
-        !state.selectedJobTitle &&
-        !state.selectedCompanySize &&
-        !state.currentCountry &&
+        (!state.selectedJobTitle || state.selectedJobTitle === "") &&
+        (!state.selectedCompanySize || state.selectedCompanySize === "") &&
+        (!state.currentCountry || state.currentCountry === "") &&
         state.selectedMinSalary === 0 &&
-        state.selectedMaxSalary === Infinity
+        state.selectedMaxSalary === Infinity &&
+        state.selectedExperienceLevels.length === 0 &&
+        state.selectedEmploymentType.length === 0
     ) {
         filteredData = state.data;
     }
 
     return filteredData;
 }
+
+
 
 function wrangleData(data) {
     const employmentTypes = new Set();
@@ -241,21 +318,6 @@ function wrangleData(data) {
     let maxSalary = Infinity;
     const salaryDict = {};
     const employeeResidenceCount = {};
-
-    // Mapping dictionaries for employment types and experience levels
-    const employmentTypeMap = {
-        "PT": "Part-time",
-        "FT": "Full-time",
-        "CT": "Contract",
-        "FL": "Freelance"
-    };
-
-    const experienceLevelMap = {
-        "EN": "Entry-level / Junior",
-        "MI": "Mid-level / Intermediate",
-        "SE": "Senior-level / Expert",
-        "EX": "Executive-level / Director"
-    };
 
     // Process each data entry
     data.forEach(function (d) {
@@ -310,7 +372,6 @@ function wrangleData(data) {
     };
 }
 
-
 function updateApp() {
     const filtered = filterData();
     const dataToUse = wrangleData(filtered);
@@ -336,14 +397,18 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
 });
 
 d3.select('#filterButton').on('click', function() {
-    state.selectedEmploymentType = d3.select('input[name="employmentType"]:checked').node()?.value || "";
-    state.selectedExperienceLevel = d3.select('input[name="experienceLevel"]:checked').node()?.value || "";
+    //state.selectedEmploymentType = d3.select('input[name="employmentType"]:checked').node()?.value || "";
+    //state.selectedExperienceLevel = d3.select('input[name="experienceLevel"]:checked').node()?.value || "";
     state.selectedJobTitle = d3.select('#jobTitle').node()?.value || "";
     state.selectedCompanySize = d3.select('input[name="companySize"]:checked').node()?.value || "";
     // state.selectedSalary = +document.getElementById('salaryUserInput').value || 0;
     state.selectedMinSalary = +document.getElementById('minSalaryInput').value || 0;
     state.selectedMaxSalary = +document.getElementById('maxSalaryInput').value || Infinity;
 
+    state.selectedExperienceLevels = getSelectedExperienceLevels();
+    state.selectedEmploymentType = getSelectedEmploymentType();
+
+    console.log('employment type', state.selectedEmploymentType);
     updateApp();
 });
 
