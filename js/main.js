@@ -420,6 +420,7 @@ d3.select('#clearSelectionButton').on('click', function() {
     state.selectedCompanySize = "";
     state.selectedMinSalary = 0;
     state.selectedMaxSalary = Infinity;
+    state.currentCountry = "";
 
     d3.select('input[name="employmentType"]:checked').property("checked", false);
     d3.select('input[name="experienceLevel"]:checked').property("checked", false);
