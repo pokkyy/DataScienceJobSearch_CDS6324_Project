@@ -50,9 +50,16 @@
                 <div id="companySizeContainer"></div>
 
                 <br><br>
-                <label for="salaryUserInput">Salary:</label>
-                <input id="salaryUserInput" name="salaryUserInput">
-
+                <!-- <label for="salaryUserInput">Salary:</label>
+                <input id="salaryUserInput" name="salaryUserInput"> -->
+                <div id="salaryRangeContainer">
+                    <label for="minSalaryInput">Minimum Salary:</label>
+                    <input type="number" id="minSalaryInput" min="0" step="1000">
+                
+                    <label for="maxSalaryInput">Maximum Salary:</label>
+                    <input type="number" id="maxSalaryInput" min="0" step="1000">
+                </div>
+                
                 <br><br>
                 <button type="button" id="filterButton">Filter</button>
                 <button id="clearSelectionButton">Clear Selection</button>

@@ -1,16 +1,22 @@
 const state = {
     data: [],
+    avgSalary: {},
     previousCountry: null,
     currentCountry: "",
     selectedEmploymentType: "",
     selectedExperienceLevel: "",
     selectedJobTitle: "",
     selectedCompanySize: "",
-    selectedSalary: 0
+    selectedMinSalary: 0,
+    selectedMaxSalary: Infinity
 };
 
+// for map
 let map;
 let legend;
+let employeeResidenceLayer;
+
+// visuals
 const jobTable = makeTable();
 const jobMap = createMap();
 
@@ -28,7 +34,8 @@ function createMap() {
     }).addTo(map);
 
     function update(newData) {
-        const { averageSalaryDict, companyLocations } = newData;
+        const { companyLocations } = newData;
+        var averageSalaryDict = state.avgSalary;  // keeping colour consisten
 
         d3.json("/data/custom.geo.json").then(function (geojson) {
             var colorScale = d3.scaleLinear()
@@ -124,7 +131,7 @@ function makeTable() {
 
     function update(newData) {
         console.log("Table data:", newData); // Log newData to check its type
-        
+
         newData.sort((a, b) => a.job_title.localeCompare(b.job_title));
 
         table.selectAll("tr").remove();
@@ -192,10 +199,10 @@ function setupInteractivity(data) {
         d3.select("#companySizeContainer").append("label").text(size);
     });
 
-    d3.select("#salaryUserInput")
-        .attr("type", "range")
-        .attr("min", minSalary)
-        .attr("max", maxSalary);
+    // d3.select("#salaryUserInput")
+    //     .attr("type", "range")
+    //     .attr("min", minSalary)
+    //     .attr("max", maxSalary);
 }
 
 function filterData() {
@@ -204,9 +211,23 @@ function filterData() {
                 (!state.selectedExperienceLevel || d.experience_level === state.selectedExperienceLevel) &&
                 (!state.selectedJobTitle || d.job_title === state.selectedJobTitle) &&
                 (!state.selectedCompanySize || d.company_size === state.selectedCompanySize) &&
-                (!state.selectedSalary || +d.salary_in_usd >= state.selectedSalary)  &&
-                (!state.currentCountry || d.company_location === state.currentCountry);
+                (!state.currentCountry || d.company_location === state.currentCountry) &&
+                (d.salary_in_usd >= state.selectedMinSalary && d.salary_in_usd <= state.selectedMaxSalary);
     });
+
+    // If no filters are selected, return all data
+    if (
+        !state.selectedEmploymentType &&
+        !state.selectedExperienceLevel &&
+        !state.selectedJobTitle &&
+        !state.selectedCompanySize &&
+        !state.currentCountry &&
+        state.selectedMinSalary === 0 &&
+        state.selectedMaxSalary === Infinity
+    ) {
+        filteredData = state.data;
+    }
+
     return filteredData;
 }
 
@@ -216,9 +237,10 @@ function wrangleData(data) {
     const jobTitles = new Set();
     const companySizes = new Set();
     const companyLocations = new Set();
-    let minSalary = Infinity;
-    let maxSalary = -Infinity;
+    let minSalary = 0;
+    let maxSalary = Infinity;
     const salaryDict = {};
+    const employeeResidenceCount = {};
 
     // Mapping dictionaries for employment types and experience levels
     const employmentTypeMap = {
@@ -243,6 +265,12 @@ function wrangleData(data) {
         }
         salaryDict[d.company_location].total += +d.salary_in_usd;
         salaryDict[d.company_location].count += 1;
+
+        // Count employee residence for each company location
+        if (!employeeResidenceCount[d.company_location]) {
+            employeeResidenceCount[d.company_location] = 0;
+        }
+        employeeResidenceCount[d.company_location]++;
 
         // Add unique values to sets
         employmentTypes.add(employmentTypeMap[d.employment_type] || d.employment_type);
@@ -276,6 +304,7 @@ function wrangleData(data) {
         jobTitles: sortedJobTitles, // Return the sorted job titles array
         companySizes,
         companyLocations,
+        employeeResidenceCount,
         minSalary,
         maxSalary
     };
@@ -287,7 +316,7 @@ function updateApp() {
     const dataToUse = wrangleData(filtered);
 
     // console.log('Filtered: ', filtered);
-    // console.log('DataToUse: ', dataToUse);
+    console.log('DataToUse: ', dataToUse);
 
     jobTable(dataToUse.data);
     jobMap(dataToUse)
@@ -297,7 +326,9 @@ d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
     state.data = data;
     const filtered = filterData();
     const dataToUse = wrangleData(filtered);
-    
+
+    state.avgSalary = dataToUse.averageSalaryDict;
+
     setupInteractivity(dataToUse);
     jobMap(dataToUse);
 
@@ -309,7 +340,9 @@ d3.select('#filterButton').on('click', function() {
     state.selectedExperienceLevel = d3.select('input[name="experienceLevel"]:checked').node()?.value || "";
     state.selectedJobTitle = d3.select('#jobTitle').node()?.value || "";
     state.selectedCompanySize = d3.select('input[name="companySize"]:checked').node()?.value || "";
-    state.selectedSalary = +document.getElementById('salaryUserInput').value || 0;
+    // state.selectedSalary = +document.getElementById('salaryUserInput').value || 0;
+    state.selectedMinSalary = +document.getElementById('minSalaryInput').value || 0;
+    state.selectedMaxSalary = +document.getElementById('maxSalaryInput').value || Infinity;
 
     updateApp();
 });
@@ -320,13 +353,15 @@ d3.select('#clearSelectionButton').on('click', function() {
     state.selectedExperienceLevel = "";
     state.selectedJobTitle = "";
     state.selectedCompanySize = "";
-    state.selectedSalary = 0;
+    state.selectedMinSalary = 0;
+    state.selectedMaxSalary = Infinity;
 
     d3.select('input[name="employmentType"]:checked').property("checked", false);
     d3.select('input[name="experienceLevel"]:checked').property("checked", false);
     d3.select('#jobTitle').property("value", "");
     d3.select('input[name="companySize"]:checked').property("checked", false);
-    document.getElementById('salaryUserInput').value = 0;
+    document.getElementById('minSalaryInput').value = 0;
+    document.getElementById('maxSalaryInput').value = 0;
 
     updateApp();
 });
