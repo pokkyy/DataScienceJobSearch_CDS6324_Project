@@ -375,22 +375,25 @@ function updateEmploymentTypeCount(data) {
     // Clear previous content
     employmentTypeCountContainer.selectAll("div").remove();
 
-    // Create a container for each row of employment type and count
-    const typeCountRows = employmentTypeCountContainer.selectAll(".employment-type-count-row")
+    // Create a container for each employment type count
+    const typeContainer = employmentTypeCountContainer.selectAll(".employment-type-container")
         .data(data)
         .enter()
         .append("div")
-        .attr("class", "employment-type-count-row");
+        .attr("class", "employment-type-container")
+        .style("display", "inline-block") // Set to inline-block for inline display
 
     // Add count as large number
-    typeCountRows.append("div")
+    typeContainer.append("div")
         .attr("class", "employment-type-count")
+        .style("display", "inline-block") // Inline display for count
         .text(d => d.count);
 
-    // Add employment type as text
-    typeCountRows.append("div")
+    // Add employment type as bold text, below the count
+    typeContainer.append("div")
         .attr("class", "employment-type")
-        .text(d => d.employment_type);
+        .style("display", "block") // Block display for type (default behavior)
+        .text(d => `${d.employment_type}`);
 }
 
 
