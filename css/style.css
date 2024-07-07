@@ -6,9 +6,13 @@ body {
     background-color: #FBFBFF;
 }
 
+.align-right {
+    text-align: right;
+}
+
 /* Heading Styling */
 h1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     text-decoration: underline;
     margin-bottom: 15px;
