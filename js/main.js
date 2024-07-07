@@ -267,7 +267,6 @@ function makeBarplot(svgSelector) {
     }
     return update;
 }
-
 function makeLineplot(svgSelector) {
     const margin = { top: 15, right: 10, bottom: 80, left: 40 };
     const width = 300 - margin.left - margin.right;
@@ -280,10 +279,35 @@ function makeLineplot(svgSelector) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    function update(newData) {
-        // Clear previous elements
-        svg.selectAll("*").remove();
+    // Define initial scales and axes
+    const x = d3.scaleLinear().range([0, width]);
+    const y = d3.scaleLinear().range([height, 0]);
 
+    const xAxis = svg.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0,${height})`);
+
+    const yAxis = svg.append("g")
+        .attr("class", "y-axis");
+
+    // Append axis labels
+    svg.append("text")
+        .attr("class", "x-axis-label")
+        .attr("text-anchor", "middle")
+        .attr("x", width)
+        .attr("y", height + margin.bottom - 10)
+        .text("Year")
+        .style("font-size", "10px");
+
+    svg.append("text")
+        .attr("class", "y-axis-label")
+        .attr("text-anchor", "top")
+        .attr("x", -margin.left / 2)
+        .attr("y", -margin.top / 2)
+        .text("Avg Salary (USD)")
+        .style("font-size", "8px");
+
+    function update(newData) {
         // Parse the data and group by work_year
         const dataByYear = d3.rollups(
             newData,
@@ -293,81 +317,70 @@ function makeLineplot(svgSelector) {
 
         // Sort data by work_year
         dataByYear.sort((a, b) => a.work_year - b.work_year);
-        console.log(dataByYear)
 
-        // Define scales
-        const x = d3.scaleLinear()
-            .domain(d3.extent(dataByYear, d => d.work_year))
-            .range([0, width]);
-
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(dataByYear, d => d.avg_salary)])
-            .nice()
-            .range([height, 0]);
+        // Update scales domain
+        x.domain(d3.extent(dataByYear, d => d.work_year));
+        y.domain([0, d3.max(dataByYear, d => d.avg_salary)]).nice();
 
         // Define line generator
         const line = d3.line()
             .x(d => x(d.work_year))
             .y(d => y(d.avg_salary));
 
-        // Add the line path
-        svg.append("path")
-            .datum(dataByYear)
+        // Update the line path with transition
+        svg.selectAll(".line")
+            .data([dataByYear])
+            .join("path")
             .attr("class", "line")
             .attr("fill", "none")
             .attr("stroke", "#60AB9A")
             .attr("stroke-width", 2)
+            .transition()
+            .duration(500)
             .attr("d", line);
 
-        // Add points
+        // Update the dots with transition
         svg.selectAll(".dot")
             .data(dataByYear)
-            .enter().append("circle")
+            .join("circle")
             .attr("class", "dot")
-            .attr("cx", d => x(d.work_year))
-            .attr("cy", d => y(d.avg_salary))
+            .attr("fill", "#60AB9A")
             .attr("r", 5)
-            .attr("fill", "#60AB9A");
+            .transition()
+            .duration(500)
+            .attr("cx", d => x(d.work_year))
+            .attr("cy", d => y(d.avg_salary));
 
-
-        // Add x-axis
-        svg.append("g")
-            .attr("class", "x-axis")
-            .attr("transform", `translate(0,${height})`)
+        // Update x-axis with transition
+        xAxis.transition()
+            .duration(500)
             .call(d3.axisBottom(x).tickFormat(d3.format("d")).tickValues(dataByYear.map(d => d.work_year)))
             .selectAll("text")
             .attr("transform", "rotate(-45)")
             .attr("y", 10)
             .attr("dy", "0.35em")
-            .style("text-anchor", "end")
-            .style("font-size", "8px");
+            .style("text-anchor", "end");
 
-        // Add y-axis
-        svg.append("g")
-            .attr("class", "y-axis")
+        // Update y-axis with transition
+        yAxis.transition()
+            .duration(500)
             .call(d3.axisLeft(y));
 
-        // Add x-axis label
-        svg.append("text")
-            .attr("class", "x-axis-label")
-            .attr("text-anchor", "middle")
-            .attr("x", width )
-            .attr("y", height + margin.bottom - 10)
-            .text("Year")
-            .style("font-size", "10px");
-        
-        // Add y-axis label
-        svg.append("text")
-            .attr("class", "y-axis-label")
-            .attr("text-anchor", "top")
+        // Update x-axis label position
+        svg.select(".x-axis-label")
+            .attr("x", width)
+            .attr("y", height + margin.bottom - 10);
+
+        // Update y-axis label
+        svg.select(".y-axis-label")
             .attr("x", -margin.left / 2)
-            .attr("y", -margin.top / 2)
-            .text("Avg Salary (USD)")
-            .style("font-size", "8px"); // Adjust font size here
+            .attr("y", -margin.top / 2);
     }
 
     return update;
 }
+
+
 
 function updateEmploymentTypeCount(data) {
     const employmentTypeCountContainer = d3.select("#employmentTypeCount");
@@ -383,11 +396,20 @@ function updateEmploymentTypeCount(data) {
         .attr("class", "employment-type-container")
         .style("display", "inline-block") // Set to inline-block for inline display
 
-    // Add count as large number
+    // Add count as large number with transition
     typeContainer.append("div")
         .attr("class", "employment-type-count")
         .style("display", "inline-block") // Inline display for count
-        .text(d => d.count);
+        .text(d => 0) // Start with 0
+        .transition()
+        .duration(800)
+        .tween("text", function(d) {
+            const node = this;
+            const i = d3.interpolateNumber(0, d.count); // Interpolate between 0 and current count
+            return function(t) {
+                node.textContent = Math.round(i(t)); // Update text content with interpolated value
+            };
+        });
 
     // Add employment type as bold text, below the count
     typeContainer.append("div")
@@ -395,6 +417,7 @@ function updateEmploymentTypeCount(data) {
         .style("display", "block") // Block display for type (default behavior)
         .text(d => `${d.employment_type}`);
 }
+
 
 
 function countEmploymentTypes(data) {
