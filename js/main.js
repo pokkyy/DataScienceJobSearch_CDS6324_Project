@@ -6,7 +6,7 @@ const state = {
     selectedEmploymentType: [],
     selectedExperienceLevels: [],
     selectedJobTitle: "",
-    selectedCompanySize: "",
+    selectedCompanySize: [],
     selectedMinSalary: 0,
     selectedMaxSalary: Infinity
 };
@@ -681,10 +681,10 @@ d3.select('#filterButton').on('click', function() {
 
 // Add event listener for the clear selection button
 d3.select('#clearSelectionButton').on('click', function() {
-    state.selectedEmploymentType = "";
-    state.selectedExperienceLevel = "";
+    state.selectedEmploymentType = [];
+    state.selectedExperienceLevels = [];
     state.selectedJobTitle = "";
-    state.selectedCompanySize = "";
+    state.selectedCompanySize = [];
     state.selectedMinSalary = 0;
     state.selectedMaxSalary = Infinity;
     state.currentCountry = "";
