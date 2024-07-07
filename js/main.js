@@ -21,6 +21,7 @@ const jobTable = makeTable();
 const jobMap = createMap();
 const experiencePlot = makeBarplot("#expLevel");
 const sizePlot = makeBarplot("#compSize");
+const avgSalaryPlot = makeLineplot("#avgSalary");
 
 
 // Mapping dictionaries for employment types and experience levels
@@ -267,6 +268,109 @@ function makeBarplot(svgSelector) {
     return update;
 }
 
+function makeLineplot(svgSelector) {
+    const margin = { top: 15, right: 10, bottom: 80, left: 40 };
+    const width = 300 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(svgSelector)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    function update(newData) {
+        // Clear previous elements
+        svg.selectAll("*").remove();
+
+        // Parse the data and group by work_year
+        const dataByYear = d3.rollups(
+            newData,
+            v => d3.mean(v, d => d.salary_in_usd),
+            d => d.work_year
+        ).map(([work_year, avg_salary]) => ({ work_year, avg_salary }));
+
+        // Sort data by work_year
+        dataByYear.sort((a, b) => a.work_year - b.work_year);
+        console.log(dataByYear)
+
+        // Define scales
+        const x = d3.scaleLinear()
+            .domain(d3.extent(dataByYear, d => d.work_year))
+            .range([0, width]);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(dataByYear, d => d.avg_salary)])
+            .nice()
+            .range([height, 0]);
+
+        // Define line generator
+        const line = d3.line()
+            .x(d => x(d.work_year))
+            .y(d => y(d.avg_salary));
+
+        // Add the line path
+        svg.append("path")
+            .datum(dataByYear)
+            .attr("class", "line")
+            .attr("fill", "none")
+            .attr("stroke", "#60AB9A")
+            .attr("stroke-width", 2)
+            .attr("d", line);
+
+        // Add points
+        svg.selectAll(".dot")
+            .data(dataByYear)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("cx", d => x(d.work_year))
+            .attr("cy", d => y(d.avg_salary))
+            .attr("r", 5)
+            .attr("fill", "#60AB9A");
+
+
+        // Add x-axis
+        svg.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x).tickFormat(d3.format("d")).tickValues(dataByYear.map(d => d.work_year)))
+            .selectAll("text")
+            .attr("transform", "rotate(-45)")
+            .attr("y", 10)
+            .attr("dy", "0.35em")
+            .style("text-anchor", "end")
+            .style("font-size", "8px");
+
+        // Add y-axis
+        svg.append("g")
+            .attr("class", "y-axis")
+            .call(d3.axisLeft(y));
+
+        // Add x-axis label
+        svg.append("text")
+            .attr("class", "x-axis-label")
+            .attr("text-anchor", "middle")
+            .attr("x", width )
+            .attr("y", height + margin.bottom - 10)
+            .text("Year")
+            .style("font-size", "10px");
+        
+        // Add y-axis label
+        svg.append("text")
+            .attr("class", "y-axis-label")
+            .attr("text-anchor", "top")
+            .attr("x", -margin.left / 2)
+            .attr("y", -margin.top / 2)
+            .text("Avg Salary (USD)")
+            .style("font-size", "8px"); // Adjust font size here
+    }
+
+    return update;
+}
+
+
+
 // -----------------------------------------------------------------------------------------------------------------------------------------------------
 function setupInteractivity(data) {
     const { employmentTypes, experienceLevels, jobTitles, companySizes, minSalary, maxSalary } = data;
@@ -482,6 +586,8 @@ function updateApp() {
     jobMap(dataToUse);
     experiencePlot(dataToUse.experienceLevelsCount, "experience_level");
     sizePlot(dataToUse.companySizesCount, "company_size");
+    avgSalaryPlot(dataToUse.data);  // Update the line plot with filtered data
+
 }
 
 d3.csv("data/ds_salaries.csv", d3.autoType).then(function (data) {
