@@ -188,6 +188,9 @@ input[type="checkbox"].company-size-checkbox:checked + span::before {
     border-collapse: collapse;
     width: 100%;
     margin-top: 15px; /* Adjust spacing */
+    max-height: 400px; /* Adjust maximum height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Optional: Add border for visual separation */
 }
 
 #jobTable th, #jobTable td {
@@ -261,3 +264,18 @@ input[type="checkbox"].company-size-checkbox:checked + span::before {
     border-radius: 8px; /* Rounded corners */
     flex: 1;
 }
+
+.employment-type-container {
+    margin-bottom: 10px;
+}
+
+.employment-type {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.employment-type-count {
+    font-size: 24px; /* Adjust font size as needed */
+    color: #5aa31f; /* Adjust color as needed */
+}
+

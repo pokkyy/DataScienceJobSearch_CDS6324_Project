@@ -369,7 +369,37 @@ function makeLineplot(svgSelector) {
     return update;
 }
 
+function updateEmploymentTypeCount(data) {
+    const employmentTypeCountContainer = d3.select("#employmentTypeCount");
 
+    // Clear previous content
+    employmentTypeCountContainer.selectAll("div").remove();
+
+    // Create a container for each row of employment type and count
+    const typeCountRows = employmentTypeCountContainer.selectAll(".employment-type-count-row")
+        .data(data)
+        .enter()
+        .append("div")
+        .attr("class", "employment-type-count-row");
+
+    // Add count as large number
+    typeCountRows.append("div")
+        .attr("class", "employment-type-count")
+        .text(d => d.count);
+
+    // Add employment type as text
+    typeCountRows.append("div")
+        .attr("class", "employment-type")
+        .text(d => d.employment_type);
+}
+
+
+function countEmploymentTypes(data) {
+    const employmentTypeCounts = d3.rollups(data, v => v.length, d => employmentTypeMap[d.employment_type] || d.employment_type)
+        .map(([employment_type, count]) => ({ employment_type, count }));
+
+    return employmentTypeCounts;
+}
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------
 function setupInteractivity(data) {
@@ -512,6 +542,7 @@ function wrangleData(data) {
     let maxSalary = Infinity;
     const salaryDict = {};
     const employeeResidenceCount = {};
+    const employmentTypeCounts = countEmploymentTypes(data);
 
     // Process each data entry
     data.forEach(function (d) {
@@ -571,7 +602,8 @@ function wrangleData(data) {
         companyLocations,
         employeeResidenceCount,
         minSalary,
-        maxSalary
+        maxSalary,
+        employmentTypeCounts
     };
 }
 
@@ -587,6 +619,7 @@ function updateApp() {
     experiencePlot(dataToUse.experienceLevelsCount, "experience_level");
     sizePlot(dataToUse.companySizesCount, "company_size");
     avgSalaryPlot(dataToUse.data);  // Update the line plot with filtered data
+    updateEmploymentTypeCount(dataToUse.employmentTypeCounts);
 
 }
 
