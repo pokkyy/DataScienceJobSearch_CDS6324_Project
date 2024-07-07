@@ -267,8 +267,9 @@ function makeBarplot(svgSelector) {
     }
     return update;
 }
+
 function makeLineplot(svgSelector) {
-    const margin = { top: 15, right: 10, bottom: 80, left: 40 };
+    const margin = { top: 15, right: 10, bottom: 80, left: 60 };
     const width = 300 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -294,18 +295,19 @@ function makeLineplot(svgSelector) {
     svg.append("text")
         .attr("class", "x-axis-label")
         .attr("text-anchor", "middle")
-        .attr("x", width)
+        .attr("x", width / 2)
         .attr("y", height + margin.bottom - 10)
         .text("Year")
         .style("font-size", "10px");
 
     svg.append("text")
         .attr("class", "y-axis-label")
-        .attr("text-anchor", "top")
-        .attr("x", -margin.left / 2)
-        .attr("y", -margin.top / 2)
+        .attr("text-anchor", "middle")
+        .attr("x", -height / 2)
+        .attr("y", -margin.left + 15)
+        .attr("transform", "rotate(-90)")
         .text("Avg Salary (USD)")
-        .style("font-size", "8px");
+        .style("font-size", "10px");
 
     function update(newData) {
         // Parse the data and group by work_year
@@ -364,28 +366,25 @@ function makeLineplot(svgSelector) {
         // Update y-axis with transition
         yAxis.transition()
             .duration(500)
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("$.2s")));
 
         // Update x-axis label position
         svg.select(".x-axis-label")
-            .attr("x", width)
+            .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10);
 
-        // Update y-axis label
+        // Update y-axis label position
         svg.select(".y-axis-label")
-            .attr("x", -margin.left / 2)
-            .attr("y", -margin.top / 2);
+            .attr("x", -height / 2)
+            .attr("y", -margin.left + 15);
     }
 
     return update;
 }
 
-
-
 function updateEmploymentTypeCount(data) {
     const employmentTypeCountContainer = d3.select("#employmentTypeCount");
 
-    // Clear previous content
     employmentTypeCountContainer.selectAll("div").remove();
 
     // Create a container for each employment type count
