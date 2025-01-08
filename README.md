@@ -15,3 +15,7 @@ The dataset has 11 attributes, 3700 records, is under the Economy and Growth dom
 
 # Project Description
 A comprehensive dashboard like this is useful for someone who is already used to seeing and understanding graphs, which is the targeted audience, data workers. It intends to deliver the information in a clean and concise manner, making sure that information that is of value to the user is presented in an orderly manner. The graphs will be adequately labeled, and the color usage will be coherent. 
+
+# Sample Images
+![Sample Image 1](sample images/DV_img1.png)
+![Sample Image 2](sample images/DV_img2.png)
