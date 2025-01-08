@@ -1,4 +1,4 @@
-# Money, Money, Money: What’s My Next Job Like? (Data Science edition)
+# What’s My Next Job Like? (Data Science edition)
 > CDS6324 Data Visualization Project || Year 3 Trimester 2
 
 # Project Members
